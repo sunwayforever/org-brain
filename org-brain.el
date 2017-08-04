@@ -257,7 +257,7 @@ In `org-brain-visualize' just return `org-brain--vis-entry'."
   (if (org-brain-filep entry)
       entry
     (concat (car entry) "::" (cadr entry))))
-
+(setq org-brain-history nil)
 (defun org-brain-choose-entry (prompt entries &optional predicate require-match initial-input)
   "PROMPT for an entry from ENTRIES and return it.
 For PREDICATE, REQUIRE-MATCH and INITIAL-INPUT, see `completing-read'."
@@ -268,7 +268,7 @@ For PREDICATE, REQUIRE-MATCH and INITIAL-INPUT, see `completing-read'."
                               (cons (org-brain-entry-name x)
                                     (nth 2 x))))
                           entries))
-         (choice (completing-read prompt targets
+         (choice (completing-read prompt (append org-brain-history targets)
                                   predicate require-match initial-input))
          (id (cdr (assoc choice targets))))
     (if id
@@ -983,10 +983,10 @@ Unless NOHISTORY is non-nil, add the entry to `org-brain--vis-history'.
 Setting NOFOCUS to t implies also having NOHISTORY as t."
   (interactive
    (let ((choices (or (cond ((equal current-prefix-arg '(4)) 'all)
-                            ((equal current-prefix-arg '(16)) 'files)
-                            ((equal current-prefix-arg '(64)) 'root)
-                            (t nil))
-                      org-brain-visualize-default-choices)))
+                         ((equal current-prefix-arg '(16)) 'files)
+                         ((equal current-prefix-arg '(64)) 'root)
+                         (t nil))
+                   org-brain-visualize-default-choices)))
      (list
       (org-brain-choose-entry
        "Entry: "
@@ -999,6 +999,10 @@ Setting NOFOCUS to t implies also having NOHISTORY as t."
               (mapcar #'org-brain-path-entry-name
                       (directory-files org-brain-path t (format "\\.%s$" org-brain-files-extension)))))))))
   (setq org-brain--vis-entry entry)
+  (push org-brain--vis-entry org-brain-history)
+  (delete-duplicates org-brain-history
+                     :test (lambda (x y) (or (null y) (equal x y)))
+                     :from-end t)
   (with-current-buffer (get-buffer-create "*org-brain*")
     (read-only-mode -1)
     (delete-region (point-min) (point-max))
@@ -1024,8 +1028,8 @@ Setting NOFOCUS to t implies also having NOHISTORY as t."
         (unless nofocus
           (pop-to-buffer "*org-brain*")
           (when (and (not nohistory)
-                     (not (equal entry (car org-brain--vis-history)))
-                     (< (length org-brain--vis-history) 15))
+                   (not (equal entry (car org-brain--vis-history)))
+                   (< (length org-brain--vis-history) 15))
             (push entry org-brain--vis-history)))))))
 
 (defun org-brain-insert-visualize-button (entry)
