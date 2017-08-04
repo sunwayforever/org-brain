@@ -999,7 +999,11 @@ Setting NOFOCUS to t implies also having NOHISTORY as t."
               (mapcar #'org-brain-path-entry-name
                       (directory-files org-brain-path t (format "\\.%s$" org-brain-files-extension)))))))))
   (setq org-brain--vis-entry entry)
-  (push org-brain--vis-entry org-brain-history)
+
+  (if (listp entry)
+      (push (concat (car entry) "::" (nth 1 entry)) org-brain-history)
+    (push entry org-brain-history))
+
   (delete-duplicates org-brain-history
                      :test (lambda (x y) (or (null y) (equal x y)))
                      :from-end t)
