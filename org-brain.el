@@ -349,6 +349,7 @@ For PREDICATE, REQUIRE-MATCH and INITIAL-INPUT, see `completing-read'."
 (defun org-brain-parents (entry)
   "Get parents of ENTRY.
 Often you want the siblings too, then use `org-brain-siblings' instead."
+
   (delete-dups
    (append (org-brain--linked-property-entries entry "BRAIN_PARENTS")
            (org-brain--local-parent entry))))
@@ -1242,7 +1243,7 @@ Helper function for `org-brain-visualize'."
             (picture-move-down 1)
             (insert "|")
             (picture-move-down 1))
-          (insert "▽"))))
+          (insert "v"))))
     (picture-move-down 1)))
 
 (defun org-brain--vis-children (entry)
@@ -1262,7 +1263,7 @@ Helper function for `org-brain-visualize'."
   "Insert friends of ENTRY.
 Helper function for `org-brain-visualize'."
   (when-let ((friends (org-brain-friends entry)))
-    (insert " ←→ ")
+    (insert " <-> ")
     (dolist (friend friends)
       (let ((column (current-column)))
         (org-brain-insert-visualize-button friend)
