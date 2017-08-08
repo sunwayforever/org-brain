@@ -257,7 +257,7 @@ In `org-brain-visualize' just return `org-brain--vis-entry'."
   (if (org-brain-filep entry)
       entry
     (concat (car entry) "::" (cadr entry))))
-(setq org-brain-history nil)
+(defvar org-brain-history nil)
 (defun org-brain-choose-entry (prompt entries &optional predicate require-match initial-input)
   "PROMPT for an entry from ENTRIES and return it.
 For PREDICATE, REQUIRE-MATCH and INITIAL-INPUT, see `completing-read'."
