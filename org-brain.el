@@ -1147,7 +1147,8 @@ See `org-brain-add-resource'."
   special-mode  "Org-brain Visualize"
   "Major mode for `org-brain-visualize'.
 \\{org-brain-visualize-mode-map}"
-  (setq revert-buffer-function #'org-brain-visualize-revert))
+  ;; (setq revert-buffer-function #'org-brain-visualize-revert)
+  )
 
 (define-key org-brain-visualize-mode-map "p" 'org-brain-add-parent)
 (define-key org-brain-visualize-mode-map "P" 'org-brain-remove-parent)
