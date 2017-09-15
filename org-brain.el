@@ -1137,7 +1137,9 @@ See `org-brain-add-resource'."
 
 (defun org-brain-visualize-revert (_ignore-auto _noconfirm)
   "Revert function for `org-brain-visualize-mode'."
-  (org-brain-visualize org-brain--vis-entry t))
+  (org-brain-visualize org-brain--vis-entry t)
+  (revert-buffer--default _ignore-auto _noconfirm))
+
 (defun org-brain--revert-if-visualizing ()
   "Revert buffer if in `org-brain-visualize-mode'."
   (when (eq major-mode 'org-brain-visualize-mode)
@@ -1147,8 +1149,7 @@ See `org-brain-add-resource'."
   special-mode  "Org-brain Visualize"
   "Major mode for `org-brain-visualize'.
 \\{org-brain-visualize-mode-map}"
-  ;; (setq revert-buffer-function #'org-brain-visualize-revert)
-  )
+  (setq revert-buffer-function #'org-brain-visualize-revert))
 
 (define-key org-brain-visualize-mode-map "p" 'org-brain-add-parent)
 (define-key org-brain-visualize-mode-map "P" 'org-brain-remove-parent)
