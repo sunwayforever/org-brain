@@ -1048,7 +1048,7 @@ Setting NOFOCUS to t implies also having NOHISTORY as t."
   (insert (make-string (or indent 0) ?\ ) "\n• ")
   (run-hook-with-args 'org-brain-after-resource-button-functions (car resource))
   (insert-text-button
-   (or (cdr resource) (car resource))
+   (or (car resource) (cdr resource))
    'action (lambda (_x)
              (org-open-link-from-string (car resource)))
    'follow-link t))
@@ -1060,15 +1060,15 @@ If ENTRY is omitted, try to get it from context or prompt for it."
   (interactive "i")
   (unless entry
     (setq entry (or (ignore-errors (org-brain-entry-at-pt))
-                    (org-brain-choose-entry "Entry: "
-                                            (append (org-brain-files t)
-                                                    (org-brain-headline-entries))))))
+                   (org-brain-choose-entry "Entry: "
+                                           (append (org-brain-files t)
+                                                   (org-brain-headline-entries))))))
   (if (org-brain-filep entry)
       ;; File entry
       (with-current-buffer (find-file-noselect (org-brain-entry-path entry))
         (goto-char (point-min))
         (or (re-search-forward (concat "^\\(" org-outline-regexp "\\)") nil t)
-            (goto-char (point-max)))
+           (goto-char (point-max)))
         (if (re-search-backward org-brain-resources-start-re nil t)
             (end-of-line)
           (goto-char (point-min))
