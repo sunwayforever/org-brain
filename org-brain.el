@@ -566,12 +566,45 @@ If chosen child entry doesn't exist, create it as a new file."
                                    (org-brain-headline-entries))))
   (org-brain--revert-if-visualizing))
 
+(defun org-brain-add-child-with-name (choice)
+  "Add external child to entry at point.
+If chosen child entry doesn't exist, create it as a new file."
+  (interactive)
+  (org-brain-add-relationship
+   (org-brain-entry-at-pt)
+   (org-brain-make-entry choice (append (org-brain-files t)
+                                        (org-brain-headline-entries)))
+   )
+  (org-brain--revert-if-visualizing))
+
+
+(defun org-brain-make-entry (choice entries)
+  (unless org-id-locations (org-id-locations-load))
+  (let* ((targets (mapcar (lambda (x)
+                            (if (org-brain-filep x)
+                                (cons x nil)
+                              (cons (org-brain-entry-name x)
+                                    (nth 2 x))))
+                          entries))
+         (id (cdr (assoc choice targets))))
+    (if id
+        (org-brain-entry-from-id id)
+      (setq choice (split-string choice "::" t))
+      (let ((entry-path (org-brain-entry-path (car choice))))
+        (unless (file-exists-p entry-path)
+          (write-region "" nil entry-path))
+        (if (equal (length choice) 2)
+            (with-current-buffer (find-file-noselect entry-path)
+              (goto-char (point-max))
+              (insert (concat "\n* " (cadr choice)))
+              (list (car choice) (cadr choice) (org-id-get-create)))
+          (car choice))))))
 ;;;###autoload
 (defun org-brain-new-child ()
   "Create a new internal child headline to entry at point."
   (interactive)
   (let ((entry (org-brain-entry-at-pt))
-        (child-name (read-string "Child name: ")))
+      (child-name (read-string "Child name: ")))
     (when (equal (length child-name) 0)
       (error "Child name must be at least 1 character"))
     (if (org-brain-filep entry)
