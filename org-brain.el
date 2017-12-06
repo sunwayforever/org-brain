@@ -268,7 +268,9 @@ For PREDICATE, REQUIRE-MATCH and INITIAL-INPUT, see `completing-read'."
                               (cons (org-brain-entry-name x)
                                     (nth 2 x))))
                           entries))
-         (choice (completing-read prompt (append org-brain-history targets)
+         ;; (choice (completing-read prompt (append org-brain-history targets)
+         ;;                          predicate require-match initial-input))
+         (choice (completing-read prompt targets
                                   predicate require-match initial-input))
          (id (cdr (assoc choice targets))))
     (if id
