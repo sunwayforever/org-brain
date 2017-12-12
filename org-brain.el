@@ -39,6 +39,11 @@
   :prefix "org-brain-"
   :group 'org)
 
+(defcustom org-brain-show-siblings nil
+  "when show sibling when visualize"
+  :group 'org-brain
+  :type '(boolean))
+
 (defcustom org-brain-path (expand-file-name "brain" org-directory)
   "The root directory of your org-brain.
 
@@ -1229,11 +1234,11 @@ Helper function for `org-brain-visualize'."
 Helper function for `org-brain-visualize'."
   (when-let ((siblings (org-brain-siblings entry)))
     (let ((parent-positions nil)
-          (max-width 0))
+        (max-width 0))
       (dolist (parent siblings)
-        (let ((children-links (cdr parent))
-              (col-start (+ 3 max-width))
-              (parent-title (org-brain-title (car parent))))
+        (let ((children-links (if org-brain-show-siblings (cdr parent) nil))
+            (col-start (+ 3 max-width))
+            (parent-title (org-brain-title (car parent))))
           (goto-line 4)
           (mapc
            (lambda (child)
