@@ -44,6 +44,11 @@
   :group 'org-brain
   :type '(boolean))
 
+(defcustom org-brain-show-children-condensed nil
+  "when show sibling when visualize"
+  :group 'org-brain
+  :type '(boolean))
+
 (defcustom org-brain-path (expand-file-name "brain" org-directory)
   "The root directory of your org-brain.
 
@@ -1303,8 +1308,10 @@ Helper function for `org-brain-visualize'."
     (insert "\n\n")
     (dolist (child children)
       (let ((child-title (org-brain-title child)))
-        (when (> (+ (current-column) (length child-title))
-                 fill-column)
+        (if org-brain-show-children-condensed
+            (when (> (+ (current-column) (length child-title))
+                     fill-column)
+              (insert "\n"))
           (insert "\n"))
         (org-brain-insert-visualize-button child)
         (insert "  ")))))
