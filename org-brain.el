@@ -1121,7 +1121,10 @@ If ENTRY is omitted, try to get it from context or prompt for it."
           (re-search-backward org-brain-resources-start-re nil t)
           (end-of-line))
         (if (and link (not prompt))
-            (insert (format "\n- %s" (org-make-link-string link description)))
+            (progn
+              (let ((resources (org-brain-resources entry)))
+                (unless (memq t (mapcar (lambda (s) (string= (car s) link)) (org-brain-resources entry)))
+                  (insert (format "\n- %s" (org-make-link-string link description))))))
           (setq link (read-string "Link: " link))
           (setq description (read-string "Description: " description))
           (insert (format "\n- %s" (org-make-link-string link description))))
@@ -1137,7 +1140,10 @@ If ENTRY is omitted, try to get it from context or prompt for it."
         (re-search-backward org-brain-resources-start-re nil t)
         (end-of-line))
       (if (and link (not prompt))
-          (insert (format "\n- %s" (org-make-link-string link description)))
+          (progn
+            (let ((resources (org-brain-resources entry)))
+              (unless (memq t (mapcar (lambda (s) (string= (car s) link)) (org-brain-resources entry)))
+                (insert (format "\n- %s" (org-make-link-string link description))))))
         (setq link (read-string "Link: " link))
         (setq description (read-string "Description: " description))
         (insert (format "\n- %s" (org-make-link-string link description)))
