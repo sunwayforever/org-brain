@@ -589,6 +589,18 @@ If chosen child entry doesn't exist, create it as a new file."
    )
   (org-brain--revert-if-visualizing))
 
+(defun org-brain-get-entry (choice entries)
+  (unless org-id-locations (org-id-locations-load))
+  (let* ((targets (mapcar (lambda (x)
+                            (if (org-brain-filep x)
+                                (cons x nil)
+                              (cons (org-brain-entry-name x)
+                                    (nth 2 x))))
+                          entries))
+         (id (cdr (assoc choice targets))))
+    (if id
+        (org-brain-entry-from-id id)
+      nil)))
 
 (defun org-brain-make-entry (choice entries)
   (unless org-id-locations (org-id-locations-load))
@@ -1055,7 +1067,7 @@ Setting NOFOCUS to t implies also having NOHISTORY as t."
   (with-current-buffer (get-buffer-create "*org-brain*")
     (read-only-mode -1)
     (delete-region (point-min) (point-max))
-    (org-brain--vis-pinned)
+    ;; (org-brain--vis-pinned)
     (org-brain--vis-parents-siblings entry)
     ;; Insert entry title
     (let ((title (org-brain-title entry)))
